@@ -3,7 +3,41 @@ use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
-my @LIBS = '-Lc:\Users\Corion\Projekte\OpenVR\lib\Win64';
+#my @LIBS = '-Lc:\Users\Corion\Projekte\OpenVR\lib\Win64';
+my @LIBS = '-L.';
+
+    # This is all somewhat x64-specific at the time. What's needed here is
+    # a check for what kind of Perl you run and to then use x32 and x64
+    # appropriately
+my $bitness = '64';
+my $os = 'win';
+my $call_structure = 'x86-64';
+my $cc = 'mingw';
+
+# XXX Make configurable, later:
+my $steam_install_directory = "c:\\Program Files (x86)\\Steam\\SteamApps\\common\\SteamVR\\bin\\$os$bitness";
+
+# The Valve OpenVR doesn't ship with MinGW-compatible .lib files,
+# so we have to create them ourselves. I don't want to redistribute them,
+# or at least include the build directions here for a future me:
+sub generate_mingw_lib {
+    print "(Re)generating def file and import lib for MinGW\n";
+    
+    my $dll = "$steam_install_directory/openvr_api.dll";
+    if( ! -f $dll ) {
+        warn "Couldn't find openvr_api.dll in '$steam_install_directory', hope that's OK";
+    };
+    my $cmd = qq(gendef "$dll");
+    system( $cmd ) == 0
+        or die "Couldn't run [$cmd]: $! / $?";
+    $cmd = qq(dlltool --as-flags=--$bitness -m i386:$call_structure -k --output-lib libopenvr_api.a --input-def openvr_api.def);
+    system( $cmd ) == 0
+        or die "Couldn't run [$cmd]: $! / $?";
+}
+
+if( $cc eq 'mingw' and ! -f 'libopenvr_api.def' ) {
+    generate_mingw_lib();
+};
 
 WriteMakefile(
     NAME              => 'OpenVR',
