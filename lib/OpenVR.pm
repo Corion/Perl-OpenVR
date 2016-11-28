@@ -9,11 +9,14 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
+# Nasty hack for which I need to find an API
+$ENV{PATH} .= ';c:\\Program Files (x86)\\Steam\\SteamApps\\common\\SteamVR\\bin\\win64\\';
+
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration   use OpenVR ':all';
+# This allows declaration use OpenVR ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(

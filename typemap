@@ -1,0 +1,28 @@
+TYPEMAP
+
+const unsigned char *	    T_PV
+EVRInitError *              T_PV
+EVRInitError                T_CHAR
+intptr_t                    T_INT
+
+INPUT
+
+T_FASTPTROBJ
+        $var = INT2PTR($type,SvIV($arg));
+
+T_U_INT_ARRAY
+        if( !SvPVOK($var)) {
+            croak(\"Need a packed string of GLuints\");
+        };
+        $var = SvPV_nolen($var);
+
+T_INT_ARRAY
+        if( !SvPVOK($var)) {
+            croak(\"Need a packed string of GLints\");
+        };
+        $var = SvPV_nolen($var);
+
+OUTPUT
+
+T_FASTPTROBJ
+	sv_setref_pv($arg, \"${ntype}\", (void*)$var);

@@ -2,6 +2,9 @@ use 5.014002;
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
+
+my @LIBS = '-Lc:\Users\Corion\Projekte\OpenVR\lib\Win64';
+
 WriteMakefile(
     NAME              => 'OpenVR',
     VERSION_FROM      => 'lib/OpenVR.pm', # finds $VERSION, requires EU::MM from perl >= 5.5
@@ -11,7 +14,7 @@ WriteMakefile(
     LICENSE           => 'perl',
     #Value must be from legacy list of licenses here
     #http://search.cpan.org/perldoc?Module%3A%3ABuild%3A%3AAPI
-    LIBS              => [''], # e.g., '-lm'
+    LIBS              => ["@LIBS -lopenvr_api"], # e.g., '-lm'
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
     INC               => '-I.', # e.g., '-I. -I/usr/include/other'
     # Un-comment this if you add C files to link with later:
@@ -22,6 +25,7 @@ if  (eval {require ExtUtils::Constant; 1}) {
   # you will need to use the generated const-c.inc and const-xs.inc
   # files to replace their "fallback" counterparts before distributing your
   # changes.
+  # XXX These should be read from openvr_api.json instead of the C header
   my @names = (
               {name=>"ChaperoneCalibrationState_Error", macro=>"1"},
               {name=>"ChaperoneCalibrationState_Error_BaseStationConflict", macro=>"1"},
